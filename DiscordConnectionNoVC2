@@ -1,0 +1,78 @@
+import asyncio
+import discord
+from random import randint
+from discord.ext import commands
+from GetRandomEmoji import getRandomEmoji
+from GoogleSearch import googleSearch
+from MarkovGeneration import generation
+
+# Clockster the bot
+TOKEN = 'NzE2MTIxMTU4MzQ4NDM5NjM0.XtHJzQ.2W2i3005OHtJ2xWzn887_fN_JIQ'
+
+client = commands.Bot(command_prefix='$')
+channel = 721950921994534983          # text channel 716458739074465813
+vChannel = 691155881026519054
+otherBotID = 713862841668730920
+
+@client.event
+async def on_ready():
+    await client.change_presence(status=discord.Status.online, activity=discord.Game(name='with the fabric of spacetime'))
+    print('client ready')
+
+
+@client.command(pass_context=True)
+async def start(ctx):
+    global otherBotID
+    otherBotID = 713862841668730920
+    await client.get_channel(vChannel).connect()
+
+
+@client.command(pass_context=True)
+async def end(ctx):
+    global otherBotID
+    otherBotID = 0
+
+
+def is_connected(ctx):
+    vGuild = ctx.guild
+    voice_client = vGuild.voice_client
+    return voice_client.is_connected()
+
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:                                           # ignores its own messages
+        return
+    elif message.content.startswith('$' or 'http'):                           # ignores commands and links
+        await client.process_commands(message)
+        return
+    elif message.author.id == otherBotID:                               # user that bot responds to
+        response = generation.main(message.content)
+
+        # random numbers for reactions and link probabilities
+        randNumA = randint(1, 10)
+        randNumB = randint(1, 10)
+
+        # adds typing appearance
+        async with client.get_channel(channel).typing():
+            await asyncio.sleep(len(response) * 0.05)
+
+        # sends a related link about 20% of the time
+        if randNumA > 7:
+            link = googleSearch(response)
+            if link:
+                await client.get_channel(channel).send(response + " " + link)
+            else:
+                await client.get_channel(channel).send(response)
+        else:
+            await client.get_channel(channel).send(response)
+
+        # reacts to the previous message with emoticons 40%
+        if randNumB > 6:
+            for i in range(randint(1, 5)):
+                await message.add_reaction(getRandomEmoji())
+
+    # allows other commands to be used
+    await client.process_commands(message)
+
+client.run(TOKEN)
