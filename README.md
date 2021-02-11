@@ -19,6 +19,7 @@ The bots also occasionally:
 
 This little project was very fun and a good first personal python project for me. Depending on what text you feed it, it can produce VERY funny results and
   near endless entertainment. That being said, I also gained a few skills from the project like:
-          - Using a API
+          - Learning/using an API
           - Using Python
-          - Error fixing
+          - Bug fixing
+          - Increasing efficiency
