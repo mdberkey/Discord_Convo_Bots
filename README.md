@@ -23,3 +23,4 @@ This little project was very fun and a good first personal python project for me
           - Using Python
           - Bug fixing
           - Increasing efficiency
+          - etc.
